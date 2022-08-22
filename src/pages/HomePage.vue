@@ -2,6 +2,12 @@
   <div class="container">
 
     <div class="row">
+      <div class="d-flex justify-content-around my-3">
+        <button class="btn btn-info" @click="changePage(older)" :disabled="!older">
+          older
+        </button>
+        <button v-if="newer" class="btn btn-info" @click="changePage(newer)">newer</button>
+      </div>
       <div class="col-md-10 m-auto my-3">
         <PostForm />
       </div>
@@ -23,6 +29,18 @@ import Pop from '../utils/Pop.js';
 export default {
   setup() {
 
+    async function changePage(page) {
+      try {
+        await this.postsService.changePage(page)
+      } catch (error) {
+        logger.error(error)
+        Pop.error(error.message, 'error')
+
+      }
+    }
+
+
+
     async function getPost() {
       try {
         await postsService.getPost()
@@ -34,10 +52,15 @@ export default {
 
     onMounted(() => {
       getPost()
+      changePage()
     })
 
     return {
-      post: computed(() => AppState.post)
+
+      post: computed(() => AppState.post),
+      newer: computed(() => AppState.newer),
+      older: computed(() => AppState.older),
+
     }
   }
 }

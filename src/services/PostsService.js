@@ -6,8 +6,10 @@ class PostsService {
 
     async getPost() {
         const res = await api.get('api/posts')
-        console.log(res.data)
+
         AppState.post = res.data.posts.map(p => new Post(p))
+
+        logger.log(res.data)
     }
     async getPostBySearch(searchTerm) {
         const res = await api.get('/api/posts', {
@@ -51,6 +53,13 @@ class PostsService {
         let url = `api/posts/${postId}`
         await api.delete(url)
         AppState.post = AppState.post.filter(p => p.id != postId)
+    }
+    async changePage(page) {
+        logger.log(page)
+        const res = await api.get(page)
+        AppState.post = res.data.posts
+        AppState.newer = res.data.newer
+        AppState.older = res.data.older
     }
 
 }
